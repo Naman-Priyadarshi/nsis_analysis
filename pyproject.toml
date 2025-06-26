@@ -6,16 +6,16 @@ readme = "README.md"
 requires-python = ">=3.7"
 license = { text = "MIT" }
 authors = [
-  { name = "Naman Priyadarshi", email = "your.email@example.com" }
+  { name = "Naman Priyadarshi", email = "namanpriyadarshicr7@gmail.com" }
 ]
 dependencies = [
   "requests"
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/nsis_analyzer"
-Repository = "https://github.com/yourusername/nsis_analyzer"
-Issues = "https://github.com/yourusername/nsis_analyzer/issues"
+Homepage = "https://github.com/Naman-Priyadarshi/nsis_analyzer"
+Repository = "https://github.com/Naman-Priyadarshi/nsis_analyzer"
+Issues = "https://github.com/Naman-Priyadarshi/nsis_analyzer/issues"
 
 [tool.setuptools]
 packages = ["nsis_analyzer"]
