@@ -1,5 +1,5 @@
 [project]
-name = "nsis-analyzer"
+name = "nsis-analysis"
 version = "0.1.0"
 description = "A tool to analyze NSIS scripts and installers for suspicious behavior and optionally submit them to Hybrid Analysis."
 readme = "README.md"
@@ -9,7 +9,8 @@ authors = [
   { name = "Naman Priyadarshi", email = "namanpriyadarshicr7@gmail.com" }
 ]
 dependencies = [
-  "requests"
+  "requests",
+  "pefile",
 ]
 
 [project.urls]
@@ -18,7 +19,7 @@ Repository = "https://github.com/Naman-Priyadarshi/nsis_analyzer"
 Issues = "https://github.com/Naman-Priyadarshi/nsis_analyzer/issues"
 
 [tool.setuptools]
-packages = ["nsis_analyzer"]
+packages = ["nsis_analysis"]
 
 [tool.setuptools.package-dir]
 "" = "."

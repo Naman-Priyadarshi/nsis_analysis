@@ -3,18 +3,18 @@ import tempfile
 import shutil
 import sys
 from pathlib import Path
-import os
 import requests
 import logging
 
 from archive_utils import extract_archive, list_archive_contents
 from analyzer import analyze
+from pe_analysis import analyze_pe  # Added import
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 HYBRID_API_URL = "https://www.hybrid-analysis.com/api/v2/quick-scan/file"
-hybrid_api_key = "HYBRID_ANALYSIS_API_KEY"  # set via env var HYBRID_ANALYSIS_API_KEY
+hybrid_api_key = "your_api_key"  # set via env var HYBRID_ANALYSIS_API_KEY
 
 
 def submit_to_hybrid_analysis(file_path, api_key):
@@ -47,7 +47,7 @@ def submit_to_hybrid_analysis(file_path, api_key):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Extract and analyze NSIS installers and scripts")
+    parser = argparse.ArgumentParser(description="Extract and analyze NSIS installers, scripts, and PE files")
     parser.add_argument("installer", type=Path, help="Path to NSIS installer (.exe) or NSI script")
     parser.add_argument("-o", "--output", type=Path, default=None, help="Output directory for extraction")
     parser.add_argument("-l", "--list", action="store_true", help="Only list archive contents, do not extract")
@@ -59,6 +59,17 @@ def main():
     if not installer_path.exists():
         print(f"[!] File {installer_path} does not exist.")
         sys.exit(1)
+
+    # Analyze with PE analyzer if it's an executable
+    if installer_path.suffix.lower() == ".exe":
+        print(f"[+] Performing PE analysis on: {installer_path}")
+        try:
+            pe_info = analyze_pe(installer_path)
+            print("[+] PE File Analysis:")
+            for key, value in pe_info.items():
+                print(f"    {key}: {value}")
+        except Exception as e:
+            print(f"[!] Error analyzing PE file: {e}")
 
     # If listing archive contents only
     if args.list:
@@ -79,9 +90,6 @@ def main():
 
         try:
             findings = analyze(installer_path)
-            # findings is a list of strings, first is suspiciousness score info usually
-            # Extract score from last line or parse separately if you want numeric score
-            # Here just print all lines:
             for line in findings:
                 print(line)
         except Exception as e:
@@ -119,11 +127,9 @@ def main():
                         print("[+] Extracted files deleted.")
                         break
                     elif choice in ("n", "no"):
-                        # Ask for directory to save extracted files
                         save_path_input = input("Enter path to save extracted files (will create directory): ").strip()
                         save_path = Path(save_path_input) if save_path_input else Path(".")
                         save_path.mkdir(parents=True, exist_ok=True)
-                        # Copy all extracted files
                         for f in extracted_files:
                             target = save_path / f.name
                             shutil.copy2(f, target)
@@ -132,7 +138,7 @@ def main():
                     else:
                         print("Please answer Y or n.")
 
-            # Try to find NSI script among extracted files (usually ends with .nsi)
+            # Try to find NSI script among extracted files
             nsi_files = [f for f in extracted_files if f.suffix.lower() == ".nsi"]
 
             if nsi_files:
@@ -154,11 +160,8 @@ def main():
                 temp_dir.cleanup()
             sys.exit(1)
 
-        # Cleanup temp directory if not already deleted
-        if temp_dir is not None:
-            # Only cleanup if the directory still exists
-            if Path(temp_dir.name).exists():
-                temp_dir.cleanup()
+        if temp_dir is not None and Path(temp_dir.name).exists():
+            temp_dir.cleanup()
 
     # Submit to Hybrid Analysis if requested
     if args.submit:
