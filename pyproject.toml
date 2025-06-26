@@ -1,0 +1,28 @@
+[project]
+name = "nsis-analyzer"
+version = "0.1.0"
+description = "A tool to analyze NSIS scripts and installers for suspicious behavior and optionally submit them to Hybrid Analysis."
+readme = "README.md"
+requires-python = ">=3.7"
+license = { text = "MIT" }
+authors = [
+  { name = "Naman Priyadarshi", email = "your.email@example.com" }
+]
+dependencies = [
+  "requests"
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/nsis_analyzer"
+Repository = "https://github.com/yourusername/nsis_analyzer"
+Issues = "https://github.com/yourusername/nsis_analyzer/issues"
+
+[tool.setuptools]
+packages = ["nsis_analyzer"]
+
+[tool.setuptools.package-dir]
+"" = "."
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
